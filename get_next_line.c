@@ -6,7 +6,7 @@
 /*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:51:03 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/07 15:53:06 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/07 15:59:41 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,8 @@ char	*get_next_line(int fd)
 	{
 		return (NULL);
 	}
-
-	/* 2 : extraire de stash dans line
-	 3 : nettoyer la stash*/
+	// 2 : extraire de stash dans line
+	// 3 : nettoyer la stash
 	return (line);
 }
 
@@ -55,11 +54,12 @@ void	read_and_stash(int fd, char **stash, int *read_ptr)
 			return (0);
 		}
 		buf[*read_ptr] = '\0';
+		add_to_stash(stash, buf, *read_ptr);
 	}
 }
 
 // add le contenue du buffer a la fin de votre stash
-void	add_to_stash()
+void	add_to_stash(char *stash, char *buf, int read)
 
 // extrait tout les caractere de la stash et les stock dans la line
 // stop apres le premier \n rencontrer

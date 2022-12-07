@@ -6,7 +6,7 @@
 /*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:49:03 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/07 15:54:30 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/07 16:00:02 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 char	*get_next_line(int fd);
 void	read_and_stash(int fd, char **stash, int *read_ptr);
+void	add_to_stash(char *stash, char *buf, int read);
 
 int		found_newline(char *stash);
 size_t	ft_strlen(const char *s);
