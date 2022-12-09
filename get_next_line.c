@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
+/*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:51:03 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/07 15:59:41 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/08 13:55:11 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*get_next_line(int fd)
 
 	read = 1;
 	line = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
 		return (NULL);
 	}
@@ -54,17 +54,18 @@ void	read_and_stash(int fd, char **stash, int *read_ptr)
 			return (0);
 		}
 		buf[*read_ptr] = '\0';
-		add_to_stash(stash, buf, *read_ptr);
+		stash = ft_strjoin(stash, buf, ft_strlen(stash), ft_strlen(buf));
+		free(buf);
+		extract_line(stash, read);
 	}
 }
 
-// add le contenue du buffer a la fin de votre stash
-void	add_to_stash(char *stash, char *buf, int read)
-
 // extrait tout les caractere de la stash et les stock dans la line
 // stop apres le premier \n rencontrer
-void	extract_line()
-
+void	extract_line(char *stash, int read)
+{
+	while ()
+}
 // apres avoir extrait stash dans read, plus besoin des caractere dans stash
 // cette fonction clear la stash seulement les caractere non retourner a la fin de
 // get_next_line() sont toujours dans la static stash
