@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:51:03 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/08 13:55:11 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/09 16:30:37 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,20 @@ char	*get_next_line(int fd)
 	{
 		return (NULL);
 	}
-	// 1 : lire ce qu'on a dans notre fichiers et le mettre dans stash
 	read_and_stash(fd, &stash, &read);
 	if (stash == NULL)
 	{
 		return (NULL);
 	}
-	// 2 : extraire de stash dans line
-	// 3 : nettoyer la stash
+	extract_line(stash, line);
+	clean_stash(&stash);
+	if (line[0] == '\0')
+	{
+		free(stash);
+		stash = NULL;
+		free(line);
+		return (NULL);
+	}
 	return (line);
 }
 
@@ -40,13 +46,13 @@ void	read_and_stash(int fd, char **stash, int *read_ptr)
 {
 	char	*buf;
 
-	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf)
-	{
-		return (NULL);
-	}
 	while (!found_newline(*stash) && *read_ptr != 0)
 	{
+		buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+		if (!buf)
+		{
+			return (NULL);
+		}
 		*read_ptr = (int)read(fd, buf, BUFFER_SIZE);
 		if ((*stash == NULL && *read_ptr == 0) || *read_ptr == -1)
 		{
@@ -62,11 +68,59 @@ void	read_and_stash(int fd, char **stash, int *read_ptr)
 
 // extrait tout les caractere de la stash et les stock dans la line
 // stop apres le premier \n rencontrer
-void	extract_line(char *stash, int read)
+void	extract_line(char *stash, char *line)
 {
-	while ()
+	int	i;
+
+	i = 0;
+	gnerate_line(line, stash);
+	if (*line == NULL)
+	{
+		return (NULL);
+	}
+	while (stash[i] != '\0')
+	{
+		if (stash[i] == '\n')
+		{
+			line[i] = '\n';
+			i++;
+			break ;
+		}
+		else
+		{
+			line[i] = stash[i];
+			i++;
+		}
+	}
+	line[i] = '\0';
 }
-// apres avoir extrait stash dans read, plus besoin des caractere dans stash
-// cette fonction clear la stash seulement les caractere non retourner a la fin de
-// get_next_line() sont toujours dans la static stash
-void	clean_stash()
+
+// apres avoir extrait stash dans line, plus besoin des caractere dans stash
+// cette fonction clear la stash seulement les caractere non retourner
+// a la fin de get_next_line() sont toujours dans la static stash
+void	clean_stash(char *stash)
+{
+	int		i;
+	int		j;
+	char	*last;
+	char	*clean;
+
+	last = ft_strlen(stash);
+	i = 0;
+	j = 0;
+	clean = NULL;
+	while (last[i] && last[i] != '\0')
+	{
+		i++;
+		clean = malloc(sizeof(char) * (ft_strlen(last) - i) + 1);
+		if (!clean)
+			return (NULL);
+	}
+	while (last[i])
+	{
+		clean[j++] = last[i++];
+	}
+	clean[j] = '\0';
+	free(stash);
+	*stash = clean;
+}

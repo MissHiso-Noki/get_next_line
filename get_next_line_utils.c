@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 13:13:09 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/08 13:57:07 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/09 16:25:20 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,27 @@ char	*ft_strjoin(char const *s1, char const *s2, int size1, int size2)
 	}
 	dest[size1 + j] = '\0';
 	return (dest);
+}
+
+void	generate_line(char *line, char stash)
+{
+	int	i;
+	int	len;
+
+	len = 0;
+	while (stash)
+	{
+		i = 0;
+		while (stash[i])
+		{
+			if (stash[i] == '\n')
+			{
+				len++;
+				break ;
+			}
+			len++;
+			i++;
+		}
+	}
+	*line = malloc(sizeof(char) * (len + 1));
 }
