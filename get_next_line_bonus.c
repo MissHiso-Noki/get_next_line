@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/07 12:51:03 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/15 14:42:23 by ccoste           ###   ########.fr       */
+/*   Created: 2022/12/15 14:36:30 by ccoste            #+#    #+#             */
+/*   Updated: 2022/12/15 14:42:43 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*stash;
+	static char	*stash[1024];
 	char		*line;
 	int			rd_bytes;
 
@@ -23,13 +23,13 @@ char	*get_next_line(int fd)
 	{
 		return (NULL);
 	}
-	stash = read_and_stash(fd, stash, rd_bytes);
-	if (!stash)
+	stash[fd] = read_and_stash(fd, stash[fd], rd_bytes);
+	if (!stash[fd])
 	{
 		return (NULL);
 	}
-	line = extract_line(stash);
-	stash = clean_stash(stash);
+	line = extract_line(stash[fd]);
+	stash[fd] = clean_stash(stash[fd]);
 	return (line);
 }
 
