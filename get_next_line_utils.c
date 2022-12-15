@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
+/*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 13:13:09 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/09 16:25:20 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/12 15:21:47 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	found_newline(char *stash)
 	int	i;
 
 	i = 0;
-	if (stash == NULL)
+	if (!stash)
 	{
 		return (0);
 	}
@@ -47,50 +47,71 @@ size_t	ft_strlen(const char *s)
 }
 
 // copie une chaine de caractere dans une autre
-char	*ft_strjoin(char const *s1, char const *s2, int size1, int size2)
+char	*ft_strjoin(char *stash, char *buf)
 {
+	size_t	i;
+	size_t	j;
 	char	*dest;
-	int		i;
-	int		j;
 
-	i = 0;
-	j = 0;
-	dest = malloc((size1 + size2 + 1) * sizeof(char));
+	if (!stash)
+		stash = ft_calloc(1, sizeof(char));
+	if (!stash || !buf)
+		return (NULL);
+	dest = ft_calloc(((ft_strlen(stash) + ft_strlen(buf)) + 1), sizeof(char));
 	if (!dest)
 		return (NULL);
-	while (s1[i] != '\0')
+	i = -1;
+	j = 0;
+	if (stash)
 	{
-		dest[i] = s1[i];
-		i++;
+		while (stash[++i] != '\0')
+			dest[i] = stash[i];
 	}
-	while (s2[j] != '\0')
-	{
-		dest[size1 + j] = s2[j];
-		j++;
-	}
-	dest[size1 + j] = '\0';
+	while (buf[j])
+		dest[i++] = buf[j++];
+	free(stash);
 	return (dest);
 }
 
-void	generate_line(char *line, char stash)
+int	generate_line(char *stash)
 {
 	int	i;
 	int	len;
 
 	len = 0;
-	while (stash)
+	i = 0;
+	while (stash[i])
 	{
-		i = 0;
-		while (stash[i])
+		if (stash[i] == '\n')
 		{
-			if (stash[i] == '\n')
-			{
-				len++;
-				break ;
-			}
 			len++;
-			i++;
+			break ;
 		}
+		len++;
+		i++;
 	}
-	*line = malloc(sizeof(char) * (len + 1));
+	return (len);
+}
+
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	unsigned char	*str;
+	unsigned int	i;
+
+	if (size != 0 && (size * nmemb) / size != nmemb)
+		return (NULL);
+	str = malloc(nmemb * size);
+	if (!nmemb || !size)
+		return (str);
+	if (!str)
+	{
+		return (NULL);
+	}
+	i = 0;
+	while (i < (size * nmemb))
+	{
+		str[i] = 0;
+		i++;
+	}
+	return (str);
 }

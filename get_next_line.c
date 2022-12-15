@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
+/*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:51:03 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/09 16:30:37 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/12 15:22:44 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,68 +16,61 @@ char	*get_next_line(int fd)
 {
 	static char	*stash;
 	char		*line;
-	int			read;
+	int			rd_bytes;
 
-	read = 1;
-	line = NULL;
+	rd_bytes = 1;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
 		return (NULL);
 	}
-	read_and_stash(fd, &stash, &read);
-	if (stash == NULL)
+	stash = read_and_stash(fd, stash, rd_bytes);
+	if (!stash)
 	{
 		return (NULL);
 	}
-	extract_line(stash, line);
-	clean_stash(&stash);
-	if (line[0] == '\0')
-	{
-		free(stash);
-		stash = NULL;
-		free(line);
-		return (NULL);
-	}
+	line = extract_line(stash);
+	stash = clean_stash(stash);
 	return (line);
 }
 
 // utilise read pour add characters dans la stash
-void	read_and_stash(int fd, char **stash, int *read_ptr)
+char	*read_and_stash(int fd, char *stash, int rd_bytes)
 {
 	char	*buf;
 
-	while (!found_newline(*stash) && *read_ptr != 0)
+	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
 	{
-		buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-		if (!buf)
-		{
-			return (NULL);
-		}
-		*read_ptr = (int)read(fd, buf, BUFFER_SIZE);
-		if ((*stash == NULL && *read_ptr == 0) || *read_ptr == -1)
+		return (NULL);
+	}
+	while (!found_newline(stash) && rd_bytes != 0)
+	{
+		rd_bytes = (int)read(fd, buf, BUFFER_SIZE);
+		if (rd_bytes == -1)
 		{
 			free(buf);
-			return (0);
+			return (NULL);
 		}
-		buf[*read_ptr] = '\0';
-		stash = ft_strjoin(stash, buf, ft_strlen(stash), ft_strlen(buf));
-		free(buf);
-		extract_line(stash, read);
+		buf[rd_bytes] = '\0';
+		stash = ft_strjoin(stash, buf);
 	}
+	free(buf);
+	return (stash);
 }
 
 // extrait tout les caractere de la stash et les stock dans la line
 // stop apres le premier \n rencontrer
-void	extract_line(char *stash, char *line)
+char	*extract_line(char *stash)
 {
-	int	i;
+	int		i;
+	int		len;
+	char	*line;
 
 	i = 0;
-	gnerate_line(line, stash);
-	if (*line == NULL)
-	{
+	len = generate_line(stash);
+	line = ft_calloc(sizeof(char), (len + 1));
+	if (!line)
 		return (NULL);
-	}
 	while (stash[i] != '\0')
 	{
 		if (stash[i] == '\n')
@@ -92,35 +85,36 @@ void	extract_line(char *stash, char *line)
 			i++;
 		}
 	}
-	line[i] = '\0';
+	return (line);
 }
 
 // apres avoir extrait stash dans line, plus besoin des caractere dans stash
 // cette fonction clear la stash seulement les caractere non retourner
 // a la fin de get_next_line() sont toujours dans la static stash
-void	clean_stash(char *stash)
+char	*clean_stash(char *stash)
 {
 	int		i;
 	int		j;
-	char	*last;
 	char	*clean;
 
-	last = ft_strlen(stash);
 	i = 0;
 	j = 0;
 	clean = NULL;
-	while (last[i] && last[i] != '\0')
-	{
+	while (stash[i] && stash[i] != '\n')
 		i++;
-		clean = malloc(sizeof(char) * (ft_strlen(last) - i) + 1);
-		if (!clean)
-			return (NULL);
-	}
-	while (last[i])
+	if (!stash[i])
 	{
-		clean[j++] = last[i++];
+		free(stash);
+		return (NULL);
 	}
-	clean[j] = '\0';
+	clean = ft_calloc(sizeof(char), (ft_strlen(stash) - i + 1));
+	if (!clean)
+		return (NULL);
+	i++;
+	while (stash[i])
+	{
+		clean[j++] = stash[i++];
+	}
 	free(stash);
-	*stash = clean;
+	return (clean);
 }

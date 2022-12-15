@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
+/*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:49:03 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/09 16:24:38 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/12 15:20:46 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,25 @@
 # define GET_NEXT_LINE_H
 
 # include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5
+#  define BUFFER_SIZE 10
 # endif
 
 char	*get_next_line(int fd);
-void	read_and_stash(int fd, char **stash, int *read_ptr);
-void	add_to_stash(char *stash, char *buf, int read);
-void	extract_line(char *stash, int read, char *line);
-void	clean_stash(char *stash);
+char	*read_and_stash(int fd, char *stash, int rd_bytes);
+char	*extract_line(char *stash);
+char	*clean_stash(char *stash);
 
 int		found_newline(char *stash);
 size_t	ft_strlen(const char *s);
-char	*ft_strjoin(char const *s1, char const *s2);
-void	generate_line(char *line, char stash);
+char	*ft_strjoin(char *s1, char *s2);
+int		generate_line(char *stash);
+void	*ft_calloc(size_t nmemb, size_t size);
 
 #endif

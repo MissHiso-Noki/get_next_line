@@ -3,31 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccoste < ccoste@student.42.fr>             +#+  +:+       +#+        */
+/*   By: ccoste <ccoste@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 16:06:29 by ccoste            #+#    #+#             */
-/*   Updated: 2022/12/09 16:14:39 by ccoste           ###   ########.fr       */
+/*   Updated: 2022/12/12 15:03:43 by ccoste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <fcntl.h>
 
-int main()
+int	main(void)
 {
-	int	fd;
-	char *line;
+	int		fd;
+	int		i;
+	char	*line;
 
-	fd = open("test", O_RDONLY);
-	while(1)
+	i = 0;
+	fd = open("../test", O_RDONLY);
+	while (i < 21)
 	{
 		line = get_next_line(fd);
-		if (line == NULL)
-		{
-			break;
-		}
-		printf("%s", line);
+		if (!line)
+			printf("ligne %i : %s\n", i, line);
+		else
+			printf("ligne %i : %s", i, line);
 		free(line);
+		i++;
 	}
-	return(0);
+	close(fd);
+	return (0);
 }
